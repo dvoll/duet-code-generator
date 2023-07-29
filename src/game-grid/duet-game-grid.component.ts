@@ -1,7 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import litLogo from '../assets/lit.svg';
-import viteLogo from '/vite.svg';
+import { customElement, property, state } from 'lit/decorators.js';
 import { GameGrid } from './game-grid';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
@@ -9,18 +7,11 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
  * An example element.
  *
  * @slot - This element has a slot
- * @csspart button - The button
  */
 @customElement('duet-game-grid')
 export class DuetGameGrid extends LitElement {
-    /**
-     * Copy for the read the docs hint.
-     */
-    @property()
-    docsHint = 'Click on the Vite and Lit logos to learn more';
-
     @property({ attribute: true })
-    gameCode: string | undefined;
+    gameCode: string = '';
 
     /**
      * The number of times the button has been clicked.
@@ -28,39 +19,67 @@ export class DuetGameGrid extends LitElement {
     @property({ type: Number })
     count = 0;
 
+    @state()
     grid: GameGrid;
+
+    @property({ type: Boolean })
+    show: boolean = false;
+
+    @property()
+    site: string = 'A';
 
     constructor() {
         super();
-        this.grid = new GameGrid(this.gameCode !== undefined ? GameGrid.getValuesFromCode(this.gameCode) : undefined);
+        this.grid = new GameGrid(this.gameCode !== '' ? GameGrid.getValuesFromCode(this.gameCode) : undefined);
     }
 
     render() {
         return html`
-            <div>
-                <a href="https://vitejs.dev" target="_blank">
-                    <img src=${viteLogo} class="logo w-12 h-3" alt="Vite logo" />
-                </a>
-                <a href="https://lit.dev" target="_blank">
-                    <img src=${litLogo} class="logo lit" alt="Lit logo" />
-                </a>
-            </div>
             <slot></slot>
-            <div class="card">
-                <button @click=${this._onClick} part="button">count is ${this.count}</button>
-            </div>
-            <p class="read-the-docs">${this.docsHint}</p>
-            <div class="grid">
-                ${this.grid.getAllFields().map((field) => html`<span>${unsafeHTML(field.getPrimaryEmoji())}</span>`)}
-            </div>
-            <div class="grid">
-                ${this.grid.getAllFields().map((field) => html`<span>${unsafeHTML(field.getSecondaryEmoji())}</span>`)}
-            </div>
+            <label for="code">Code</label>
+            <input name="code" id="code" .value=${this.gameCode} @input=${this._onCodeChange} />
+            <label for="site">Seite</label>
+            <select name="site" id="site" .value=${this.site} @input=${this._onSiteSelect}>
+                <option value="A">A</option>
+                <option value="B">B</option>
+            </select>
+            <button type="submit" @click=${this._onClick}>Anzeigen</button>
+            ${this.show
+                ? html`
+                      ${this.site === 'A'
+                          ? html`
+                                <div class="grid">
+                                    ${this.grid
+                                        .getAllFields()
+                                        .map((field) => html`<span>${unsafeHTML(field.getPrimaryEmoji())}</span>`)}
+                                </div>
+                            `
+                          : html`
+                                <div class="grid">
+                                    ${this.grid
+                                        .getAllFields()
+                                        .map((field) => html`<span>${unsafeHTML(field.getSecondaryEmoji())}</span>`)}
+                                </div>
+                            `}
+                  `
+                : ''}
+            <pre>Card Code: ${this.grid.getCode()}</pre>
         `;
     }
 
     private _onClick() {
-        this.count++;
+        if (this.gameCode !== '') {
+            this.grid = new GameGrid(GameGrid.getValuesFromCode(this.gameCode));
+        }
+        this.show = true;
+    }
+    private _onCodeChange(event: InputEvent) {
+        console.log('event', event);
+        this.gameCode = (event.target as HTMLInputElement | undefined)?.value ?? '';
+    }
+    private _onSiteSelect(event: InputEvent) {
+        console.log('event', event);
+        this.site = (event.target as HTMLInputElement | undefined)?.value ?? '';
     }
 
     static styles = css`
