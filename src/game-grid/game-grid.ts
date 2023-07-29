@@ -11,7 +11,6 @@ export enum FieldType {
 }
 
 export class GameGrid {
-
     // matrix: FieldType[][];
     // this.matrix = Array.from(Array(5), () => new Array(5));
     private list: FieldType[];
@@ -30,7 +29,6 @@ export class GameGrid {
 
     constructor(code?: string) {
         this.list = new Array(25).fill(undefined);
-
     }
 
     getField(x: number = 0, yLine?: number) {
@@ -49,7 +47,7 @@ export class GameGrid {
     }
 
     getCode() {
-        const decimal = BigInt(parseInt(this.list.join(''), 10))
+        const decimal = BigInt(parseInt(this.list.join(''), 10));
         console.log('decimal', decimal);
         const base36String = decimal.toString(36);
         console.log('base36String', base36String);
@@ -58,26 +56,23 @@ export class GameGrid {
 
     generate() {
         this.list = new Array(25).fill(undefined);
-        GameGrid.frequencyMapping.forEach(map => {
+        GameGrid.frequencyMapping.forEach((map) => {
             for (let i = 0; i < map[1]; i++) {
                 this.setListField(map[0]);
-            } 
+            }
         });
     }
 
-    private getFromCode() {
-        
-    }
+    private getFromCode() {}
 
     private setListField(fieldType: FieldType) {
         const realEmptyFields = this.list.reduce<number[]>((prev, curr, currIndex) => {
-            return curr === undefined ? prev.concat([currIndex]) : prev
+            return curr === undefined ? prev.concat([currIndex]) : prev;
         }, []);
-        const realEmptyFieldIndex = realEmptyFields[this.getRandomNumber(realEmptyFields.length - 1)]
+        const realEmptyFieldIndex = realEmptyFields[this.getRandomNumber(realEmptyFields.length - 1)];
         this.list[realEmptyFieldIndex] = fieldType;
-        
     }
-    
+
     private getRandomNumber(max = 10) {
         return Math.round(Math.random() * max);
     }
