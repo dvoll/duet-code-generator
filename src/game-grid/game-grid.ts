@@ -1,19 +1,7 @@
-export enum FieldType {
-    EMPTY_EMPTY = 0, // 7
-    EMPTY_TARGET = 1, // 5
-    TARGET_EMPTY = 2, // 5
-    TARGET_TARGET = 3, // 3
-    TARGET_BOMB = 4, // 1
-    BOMB_TARGET = 5, // 1
-    EMPTY_BOMB = 6, // 1
-    BOMB_EMPTY = 7, // 1
-    BOMB_BOMB = 8, // 1
-}
+import GameGridField, { FieldType } from './game-grid-field';
 
 export class GameGrid {
-    // matrix: FieldType[][];
-    // this.matrix = Array.from(Array(5), () => new Array(5));
-    private list: FieldType[];
+    private list: GameGridField[];
 
     static frequencyMapping: [type: FieldType, frequency: number][] = [
         [FieldType.EMPTY_EMPTY, 7],
@@ -27,8 +15,8 @@ export class GameGrid {
         [FieldType.BOMB_BOMB, 1],
     ];
 
-    constructor(code?: string) {
-        this.list = new Array(25).fill(undefined);
+    constructor(values: GameGridField[] = GameGrid.getGeneratedList()) {
+        this.list = values;
     }
 
     getField(x: number = 0, yLine?: number) {
@@ -45,35 +33,60 @@ export class GameGrid {
     getAllFields() {
         return [...this.list];
     }
+    getAllFieldsAsList() {
+        return this.list.reduce<number[]>((prev, curr) => prev.concat([curr.getType()]), []);
+    }
+    getAllFieldsAsString() {
+        return this.list.reduce((prev, curr) => prev + curr.getType(), '');
+    }
 
     getCode() {
-        const decimal = BigInt(parseInt(this.list.join(''), 10));
+        const decimal = BigInt(this.getAllFieldsAsString());
+        // const decimal = BigInt(parseInt(this.list.join(''), 10));
         console.log('decimal', decimal);
         const base36String = decimal.toString(36);
         console.log('base36String', base36String);
         return base36String;
     }
 
-    generate() {
-        this.list = new Array(25).fill(undefined);
-        GameGrid.frequencyMapping.forEach((map) => {
-            for (let i = 0; i < map[1]; i++) {
-                this.setListField(map[0]);
-            }
-        });
-    }
-
-    private getFromCode() {}
-
-    private setListField(fieldType: FieldType) {
-        const realEmptyFields = this.list.reduce<number[]>((prev, curr, currIndex) => {
+    private static setFieldOnRandomPosition(list: GameGridField[], fieldType: FieldType) {
+        const realEmptyFields = list.reduce<number[]>((prev, curr, currIndex) => {
             return curr === undefined ? prev.concat([currIndex]) : prev;
         }, []);
-        const realEmptyFieldIndex = realEmptyFields[this.getRandomNumber(realEmptyFields.length - 1)];
-        this.list[realEmptyFieldIndex] = fieldType;
+        const realEmptyFieldIndex = realEmptyFields[GameGrid.getRandomNumber(realEmptyFields.length - 1)];
+        const newList = [...list];
+        newList[realEmptyFieldIndex] = new GameGridField(fieldType);
+        return newList;
     }
 
-    private getRandomNumber(max = 10) {
+    static getGeneratedList() {
+        let list = new Array(25).fill(undefined) as GameGridField[];
+        GameGrid.frequencyMapping.forEach((map) => {
+            for (let i = 0; i < map[1]; i++) {
+                list = GameGrid.setFieldOnRandomPosition(list, map[0]);
+            }
+        });
+        return list;
+    }
+
+    static getValuesFromCode(code: string) {
+        const decimalCode = GameGrid.convertBaseStringToBigInt(code);
+        let stringCode = decimalCode.toString();
+        while (stringCode.length < 25) {
+            stringCode = `0${stringCode}`;
+        }
+        const list = [];
+        for (let i = 0; i < stringCode.length; i++) {
+            list.push(new GameGridField(parseInt(stringCode[i], 10)));
+        }
+        return list;
+    }
+
+    private static getRandomNumber(max = 10) {
         return Math.round(Math.random() * max);
+    }
+
+    private static convertBaseStringToBigInt(value: string, radix: number = 36) {
+        return Array.from(value).reduce((r, v) => r * BigInt(radix) + BigInt(parseInt(v, radix)), 0n);
     }
 }

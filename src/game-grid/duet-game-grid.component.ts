@@ -2,6 +2,8 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import litLogo from '../assets/lit.svg';
 import viteLogo from '/vite.svg';
+import { GameGrid } from './game-grid';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 /**
  * An example element.
@@ -17,21 +19,27 @@ export class DuetGameGrid extends LitElement {
     @property()
     docsHint = 'Click on the Vite and Lit logos to learn more';
 
+    @property({ attribute: true })
+    gameCode: string | undefined;
+
     /**
      * The number of times the button has been clicked.
      */
     @property({ type: Number })
     count = 0;
 
+    grid: GameGrid;
+
+    constructor() {
+        super();
+        this.grid = new GameGrid(this.gameCode !== undefined ? GameGrid.getValuesFromCode(this.gameCode) : undefined);
+    }
+
     render() {
         return html`
             <div>
                 <a href="https://vitejs.dev" target="_blank">
-                    <img
-                        src=${viteLogo}
-                        class="logo w-12 h-3"
-                        alt="Vite logo"
-                    />
+                    <img src=${viteLogo} class="logo w-12 h-3" alt="Vite logo" />
                 </a>
                 <a href="https://lit.dev" target="_blank">
                     <img src=${litLogo} class="logo lit" alt="Lit logo" />
@@ -39,11 +47,15 @@ export class DuetGameGrid extends LitElement {
             </div>
             <slot></slot>
             <div class="card">
-                <button @click=${this._onClick} part="button">
-                    count is ${this.count}
-                </button>
+                <button @click=${this._onClick} part="button">count is ${this.count}</button>
             </div>
             <p class="read-the-docs">${this.docsHint}</p>
+            <div class="grid">
+                ${this.grid.getAllFields().map((field) => html`<span>${unsafeHTML(field.getPrimaryEmoji())}</span>`)}
+            </div>
+            <div class="grid">
+                ${this.grid.getAllFields().map((field) => html`<span>${unsafeHTML(field.getSecondaryEmoji())}</span>`)}
+            </div>
         `;
     }
 
@@ -120,6 +132,21 @@ export class DuetGameGrid extends LitElement {
             button {
                 background-color: #f9f9f9;
             }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            border: 2px solid black;
+            border-radius: 25px;
+            margin-bottom: 2rem;
+        }
+
+        .grid > * {
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     `;
 }
