@@ -228,6 +228,20 @@ describe('Game Grid Model', async () => {
         const grid2 = new GameGrid(GameGrid.getValuesFromCode(code));
         expect(grid.getAllFields().join('')).to.be.equal(grid2.getAllFields().join(''));
     });
+
+    it('should validate new grid', () => {
+        expect(grid.isValid).to.be.true;
+    });
+
+    it('should validate correct code with success', () => {
+        const grid = new GameGrid(GameGrid.getValuesFromCode('dkknrb08m8mne1jr'));
+        expect(grid.isValid).to.be.true;
+    });
+
+    it('should validate wrong code with error', () => {
+        const grid = new GameGrid(GameGrid.getValuesFromCode('dkknrb08m8'));
+        expect(grid.isValid).to.be.false;
+    });
 });
 
 // describe('Game grid', () => {

@@ -3,6 +3,10 @@ import GameGridField, { FieldType } from './game-grid-field';
 export class GameGrid {
     private list: GameGridField[];
 
+    get isValid(): boolean {
+        return GameGrid.validateList(this.list);
+    }
+
     static frequencyMapping: [type: FieldType, frequency: number][] = [
         [FieldType.EMPTY_EMPTY, 7],
         [FieldType.EMPTY_TARGET, 5],
@@ -80,6 +84,15 @@ export class GameGrid {
             list.push(new GameGridField(parseInt(stringCode[i], 10)));
         }
         return list;
+    }
+
+    static validateCode(code: string): boolean {
+        const list = GameGrid.getValuesFromCode(code);
+        return GameGrid.validateList(list);
+    }
+    
+    static validateList(list: GameGridField[]): boolean {
+        return GameGrid.frequencyMapping.every((map) => list.filter((field) => field.getType() === map[0]).length === map[1]);
     }
 
     private static getRandomNumber(max = 10) {
