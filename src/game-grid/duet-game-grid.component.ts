@@ -1,7 +1,7 @@
 import { LitElement, PropertyValues, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { GameGrid } from './game-grid';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import './duet-game-field.component';
 
 /**
  * An example element.
@@ -57,35 +57,20 @@ export class DuetGameGrid extends LitElement {
 
     render() {
         return html`
-            ${this.side === 'A'
-                ? html`
-                      <div class="grid">
-                          ${this.grid
-                              .getAllFields()
-                              .map(
-                                  (field) =>
-                                      html`<span
-                                          >${this.isInvalid
-                                              ? unsafeHTML('&#128683;')
-                                              : unsafeHTML(field.getPrimaryEmoji())}</span
-                                      >`
-                              )}
-                      </div>
-                  `
-                : html`
-                      <div class="grid">
-                          ${this.grid
-                              .getAllFields()
-                              .map(
-                                  (field) =>
-                                      html`<span
-                                          >${this.isInvalid
-                                              ? unsafeHTML('&#128683;')
-                                              : unsafeHTML(field.getSecondaryEmoji())}</span
-                                      >`
-                              )}
-                      </div>
-                  `}
+            <div class="grid">
+                ${this.grid
+                    .getAllFields()
+                    .map(
+                        (field) =>
+                            html`<duet-game-field
+                                .fieldType=${this.isInvalid
+                                    ? 'invalid'
+                                    : this.side !== 'A'
+                                    ? field.getPrimaryValue()
+                                    : field.getSecondaryValue()}
+                            ></duet-game-field>`
+                    )}
+            </div>
         `;
     }
 
@@ -97,15 +82,11 @@ export class DuetGameGrid extends LitElement {
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-            border: 2px solid black;
-            border-radius: 25px;
-        }
-
-        .grid > * {
-            aspect-ratio: 1/1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            /* border: 2px solid black; */
+            /* border-radius: 25px; */
+            margin-bottom: 2rem;
+            overflow: hidden;
+            gap: 0.25rem;
         }
     `;
 }
