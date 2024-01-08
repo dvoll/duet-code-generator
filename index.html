@@ -47,6 +47,12 @@
         x-on:invalid-game-code="invalidCode = true">
     </duet-game-grid>
     <pre x-show="!invalidCode">Card Code: <span x-text="code"></span></pre>
+    
+    <details class="w-full">
+        <summary>Infos zur Farbverteilung</summary>
+        <p class="mt-2">Unter den 9 Wörtern, die du in Grün gekennzeichnet hast, gibt es 3, die auch auf der Rückseite der Karte in Grün erscheinen. Das impliziert, dass ihr zusammen 15 Wörter erraten müsst.</p>
+        <p class="mt-2">Von den 3 Karten, die auf deiner Seite in Schwarz erscheinen, hat eine auf der Rückseite dieselbe Farbe, eine ist in Grün und eine in Beige.</p>
+    </details>
 </body>
 
 </html>
