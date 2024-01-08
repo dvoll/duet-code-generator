@@ -9,8 +9,8 @@
     
     
     
-  <script type="module" crossorigin src="/duet-code-generator/assets/index-40ac0b2b.js"></script>
-  <link rel="stylesheet" href="/duet-code-generator/assets/index-f5547c3c.css">
+  <script type="module" crossorigin src="/duet-code-generator/assets/index-f0197a40.js"></script>
+  <link rel="stylesheet" href="/duet-code-generator/assets/index-f773d1d3.css">
 </head>
 
 <body class="flex flex-col items-center justify-center gap-4 px-2 py-8" x-data="{ code: '', codeInput: '', side: 'A', invalidCode: false }">
@@ -22,6 +22,13 @@
                     class="font-mono tracking-widest bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500">
                 <p class="text-red-700" x-show="invalidCode">Code ist ungültig</p>
             </fieldset>
+            <button type="submit"
+                class="mt-2 border-gray-200 border-2 rounded-md p-2 tracking-widest font-sans hover:bg-gray-100  focus:outline-none focus:border-purple-500 dark:hover:bg-gray-700">
+                <span x-show="codeInput !== '';">Anzeigen</span>
+                <span x-show="codeInput === '';">Generieren</span>
+            </button>
+        </form>
+        <form class="flex flex-col gap-2 mt-2" x-on:submit.prevent="">
             <fieldset class="flex flex-col">
                 <label class="" for="side">Seite</label>
                 <div class="relative">
@@ -37,11 +44,6 @@
                     </div>
                 </div>
             </fieldset>
-            <button type="submit"
-                class="mt-2 border-gray-200 border-2 rounded-md p-2 tracking-widest font-sans hover:bg-gray-100  focus:outline-none focus:border-purple-500 dark:hover:bg-gray-700">
-                <span x-show="codeInput !== '';">Anzeigen</span>
-                <span x-show="codeInput === '';">Generieren</span>
-            </button>
         </form>
     </div>
     <duet-game-grid class="w-full max-w-md" x-bind:game-code="code" x-bind:side="side"
@@ -49,6 +51,12 @@
         x-on:invalid-game-code="invalidCode = true">
     </duet-game-grid>
     <pre x-show="!invalidCode">Card Code: <span x-text="code"></span></pre>
+    
+    <details class="w-full">
+        <summary>Infos zur Farbverteilung</summary>
+        <p class="mt-2">Unter den 9 Wörtern, die du in Grün gekennzeichnet hast, gibt es 3, die auch auf der Rückseite der Karte in Grün erscheinen. Das impliziert, dass ihr zusammen 15 Wörter erraten müsst.</p>
+        <p class="mt-2">Von den 3 Karten, die auf deiner Seite in Schwarz erscheinen, hat eine auf der Rückseite dieselbe Farbe, eine ist in Grün und eine in Beige.</p>
+    </details>
 </body>
 
 </html>
