@@ -20,6 +20,13 @@
                     class="font-mono tracking-widest bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500">
                 <p class="text-red-700" x-show="invalidCode">Code ist ungültig</p>
             </fieldset>
+            <button type="submit"
+                class="mt-2 border-gray-200 border-2 rounded-md p-2 tracking-widest font-sans hover:bg-gray-100  focus:outline-none focus:border-purple-500 dark:hover:bg-gray-700">
+                <span x-show="codeInput !== '';">Anzeigen</span>
+                <span x-show="codeInput === '';">Generieren</span>
+            </button>
+        </form>
+        <form class="flex flex-col gap-2 mt-2" x-on:submit.prevent="">
             <fieldset class="flex flex-col">
                 <label class="" for="side">Seite</label>
                 <div class="relative">
@@ -35,11 +42,6 @@
                     </div>
                 </div>
             </fieldset>
-            <button type="submit"
-                class="mt-2 border-gray-200 border-2 rounded-md p-2 tracking-widest font-sans hover:bg-gray-100  focus:outline-none focus:border-purple-500 dark:hover:bg-gray-700">
-                <span x-show="codeInput !== '';">Anzeigen</span>
-                <span x-show="codeInput === '';">Generieren</span>
-            </button>
         </form>
     </div>
     <duet-game-grid class="w-full max-w-md" x-bind:game-code="code" x-bind:side="side"
